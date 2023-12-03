@@ -2,8 +2,6 @@
 
 # Controls game
 class Hangman
-  attr_reader :secret_word
-
   def initialize
     @secret_word = pick_secret_word
     @strikes = 0
