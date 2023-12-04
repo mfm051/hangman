@@ -13,11 +13,10 @@ class Hangman
   end
 
   def start_game
-    until @strikes == 6
+    until @strikes == MAX_STRIKES
       print_game_status
 
       update_guess
-
       update_game_status
 
       break if @known_letters.join == @secret_word
