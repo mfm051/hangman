@@ -45,7 +45,7 @@ class Hangman
 
   def update_guess
     puts 'Choose a letter or try to guess the word'
-    user_guess = gets.chomp
+    user_guess = gets.chomp.downcase
 
     new_guess(user_guess)
   rescue StandardError => e
