@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+require_relative 'secret_word'
+
 # Controls game
 class Hangman
   MAX_STRIKES = 6
 
   def initialize
-    @secret_word = pick_secret_word
+    @secret_word = SecretWord.new
     @strikes = 0
     @known_letters = Array.new(@secret_word.length, '_')
     @previous_guesses = []
@@ -16,7 +18,7 @@ class Hangman
     until @strikes == MAX_STRIKES
       print_game_status
 
-      update_guess
+      new_guess
       update_game_status
 
       break if @known_letters.join == @secret_word
@@ -27,13 +29,6 @@ class Hangman
 
   private
 
-  def pick_secret_word
-    dictionary = File.open('google-10000-english-no-swears.txt', 'r')
-    valid_words = dictionary.readlines(chomp: true).select { |word| word.length.between?(5, 12) }
-
-    valid_words[Random.rand(valid_words.length - 1)]
-  end
-
   def print_game_status
     puts "#{MAX_STRIKES - @strikes} tries left\n\n"
 
@@ -42,17 +37,17 @@ class Hangman
     puts "Previous guesses: #{@previous_guesses.join(', ')}"
   end
 
-  def update_guess
+  def new_guess
     puts 'Choose a letter or try to guess the word'
     user_guess = gets.chomp.downcase
 
-    new_guess(user_guess)
+    guess(user_guess)
   rescue StandardError => e
     puts e.message
     retry
   end
 
-  def new_guess(guess)
+  def guess(guess)
     raise StandardError, 'Invalid guess' unless guess.length == 1 || guess.length == @secret_word.length
     raise StandardError, 'Option already chosen' if @previous_guesses.include?(guess)
 
@@ -60,23 +55,17 @@ class Hangman
   end
 
   def update_game_status
-    if @secret_word.include?(@current_guess)
-      update_known_letters
-    else
-      @strikes += 1
-    end
-
     @previous_guesses << @current_guess
+
+    return @strikes += 1 unless @secret_word.include?(@current_guess)
+
+    update_known_letters
   end
 
   def update_known_letters
     @current_guess.chars.each do |letter|
-      letter_positions(letter).each { |i| @known_letters[i] = letter }
+      @secret_word.letter_positions(letter).each { |i| @known_letters[i] = letter }
     end
-  end
-
-  def letter_positions(letter)
-    @secret_word.chars.each_index.select { |i| @secret_word[i] == letter }
   end
 
   def game_result
