@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 require_relative 'secret_word'
+require_relative 'game_saver'
 
 # Controls game
 class Hangman
+  include GameSaver
+
   MAX_STRIKES = 6
 
   def initialize
@@ -12,16 +15,19 @@ class Hangman
     @known_letters = Array.new(@secret_word.length, '_')
     @previous_guesses = []
     @current_guess = nil
+    @saved = false
   end
 
   def start_game
-    until @strikes == MAX_STRIKES
+    puts "--Mastermind--\n\nEnter .save anytime to save current game\n\n"
+    sleep 1
+
+    until end_of_game?
       print_game_status
 
-      new_guess
-      update_game_status
+      user_input
 
-      break if @known_letters.join == @secret_word
+      update_game_status
     end
 
     puts game_result
@@ -34,17 +40,24 @@ class Hangman
 
     puts "#{@known_letters.join(' ')}\n\n"
 
-    puts "Previous guesses: #{@previous_guesses.join(', ')}"
+    puts "Previous guesses: #{@previous_guesses.join(', ')}\n\n"
   end
 
-  def new_guess
+  def user_input
     puts 'Choose a letter or try to guess the word'
-    user_guess = gets.chomp.downcase
+    user_input = gets.chomp.downcase
 
-    guess(user_guess)
+    return save_game if user_input == '.save'
+
+    guess(user_input)
   rescue StandardError => e
     puts e.message
     retry
+  end
+
+  def save_game
+    save(self)
+    @saved = true
   end
 
   def guess(guess)
@@ -70,8 +83,13 @@ class Hangman
 
   def game_result
     return 'You win' if @known_letters.join == @secret_word
+    return 'Game saved successfully' if @saved == true
 
     "Game over. Correct word: #{@secret_word}"
+  end
+
+  def end_of_game?
+    @strikes == MAX_STRIKES || @known_letters.join == @secret_word || @saved
   end
 end
 
