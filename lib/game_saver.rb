@@ -7,9 +7,9 @@ module GameSaver
   def save(game, filename)
     make_dir
 
-    File.open("#{filename}.yml", 'w') { YAML.dump(game) }
+    File.open(filename, 'w') { |file| file.puts YAML.dump(game) }
   rescue StandardError
-    File.open("#{standard_filename}.yml", 'w') { YAML.dump(game) }
+    File.open(standard_filename, 'w') { |file| file.puts YAML.dump(game) }
   end
 
   def make_dir

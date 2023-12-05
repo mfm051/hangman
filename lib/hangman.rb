@@ -56,7 +56,10 @@ class Hangman
   end
 
   def save_game
-    save(self)
+    puts 'Choose a filename'
+    filename = gets.chomp
+
+    save(self, filename)
     @saved = true
   end
 
