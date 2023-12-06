@@ -14,6 +14,14 @@ module GameSaver
     File.open(standard_filename, 'w') { |file| file.puts YAML.dump(game_object) }
   end
 
+  def load(filename)
+    raise StandardError, 'File not found' unless File.exist?("#{DEFAULT_DIR}/#{filename}")
+
+    File.open("#{DEFAULT_DIR}/#{filename}", 'r') do |file|
+      YAML.safe_load_file(file, permitted_classes: [Hangman, SecretWord])
+    end
+  end
+
   def make_dir
     Dir.mkdir(DEFAULT_DIR) unless Dir.exist?(DEFAULT_DIR)
   end

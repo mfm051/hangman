@@ -18,6 +18,25 @@ class Hangman
     @saved = false
   end
 
+  def self.new_game
+    puts 'Load previous game? [y/n]'
+    user_choice = gets.chomp.downcase
+
+    return load_game if user_choice == 'y'
+
+    Hangman.new.start_game
+  end
+
+  def self.load_game
+    puts 'Enter filename'
+    filename = gets.chomp
+
+    Hangman.new.load(filename).start_game
+  rescue StandardError => e
+    puts e.message
+    retry
+  end
+
   def start_game
     puts "--Mastermind--\n\nEnter .save anytime to save current game\n\n"
     sleep 1
@@ -98,5 +117,4 @@ end
 
 # Game
 
-hangman = Hangman.new
-hangman.start_game
+Hangman.new_game
