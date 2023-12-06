@@ -31,10 +31,15 @@ class Hangman
     puts 'Enter filename'
     filename = gets.chomp
 
-    Hangman.new.load(filename).start_game
-  rescue StandardError => e
-    puts e.message
-    retry
+    begin
+      saved_game = Hangman.new.load(filename)
+    rescue StandardError => e
+      puts e.message
+      retry
+    end
+
+    File.delete(".saved/#{filename}")
+    saved_game.start_game
   end
 
   def start_game
