@@ -35,7 +35,7 @@ class Hangman
       saved_game = Hangman.new.load(filename)
     rescue StandardError => e
       puts e.message
-      retry
+      return
     end
 
     File.delete(".saved/#{filename}")
