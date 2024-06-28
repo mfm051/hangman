@@ -43,7 +43,7 @@ class Hangman
   end
 
   def start_game
-    puts "--Mastermind--\n\nEnter .save anytime to save current game\n\n"
+    puts "--Hangman--\n\nEnter .save anytime to save current game\n\n"
     sleep 1
 
     until end_of_game?
@@ -119,7 +119,3 @@ class Hangman
     @strikes == MAX_STRIKES || @known_letters.join == @secret_word || @saved
   end
 end
-
-# Game
-
-Hangman.new_game
